@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蛇类知识刷题</title>
+  <style>
+    body { font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif; background: linear-gradient(135deg,#e3f0ff 0%,#f9f9f9 100%); margin: 0; padding: 0; }
+    .container { max-width: 480px; margin: 56px auto 36px auto; background: #fff; border-radius: 28px; box-shadow: 0 8px 40px #1976d220; padding: 48px 28px 38px 28px; position: relative; }
+    h1 { text-align: center; color: #1976d2; font-size: 2.3rem; letter-spacing: 2px; margin-bottom: 28px; font-weight: 700; }
+    .top-btns { display: flex; justify-content: center; gap: 24px; margin-bottom: 18px; }
+    .top-btn { min-width: 110px; font-size: 1.08rem; padding: 12px 0; border: none; border-radius: 18px; font-weight: 500; letter-spacing: 1px; box-shadow: 0 2px 8px #1976d220; cursor: pointer; transition: background 0.18s, box-shadow 0.18s, color 0.18s, transform 0.18s; }
+    .top-btn.rank { background: linear-gradient(90deg,#43a047 60%,#a6e3a1 100%); color: #fff; }
+    .top-btn.rank:hover { background: #388e3c; color: #fff; transform: translateY(-2px) scale(1.04); }
+    .top-btn.wrong { background: linear-gradient(90deg,#ff7043 60%,#ffd6c8 100%); color: #fff; }
+    .top-btn.wrong:hover { background: #e65100; color: #fff; transform: translateY(-2px) scale(1.04); }
+    .img-box { display: flex; justify-content: center; align-items: center; margin: 36px 0 28px 0; }
+    .img-box img { max-width: 360px; max-height: 240px; border-radius: 22px; border: 2.5px solid #e3eafc; background: #f6fafd; box-shadow: 0 4px 24px #1976d220; }
+    .options { display: flex; flex-wrap: wrap; gap: 22px; justify-content: center; margin-bottom: 8px; }
+    .option-btn { flex: 1 1 46%; min-width: 160px; min-height: 54px; background: linear-gradient(90deg,#e3eafc 60%,#f6fafd 100%); border: none; border-radius: 18px; padding: 0; font-size: 1.18rem; cursor: pointer; transition: background 0.18s, box-shadow 0.18s, color 0.18s, transform 0.18s; box-shadow: 0 2px 8px #1976d220; font-weight: 500; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; }
+    .option-btn:hover:not(:disabled) { background: #b6d0ff; color: #174ea6; box-shadow: 0 6px 18px #1976d233; transform: translateY(-2px) scale(1.04); }
+    .option-btn.correct { background: linear-gradient(90deg,#a6e3a1 60%,#eafbe7 100%); color: #1b5e20; box-shadow: 0 2px 12px #43a04733; }
+    .option-btn.wrong { background: linear-gradient(90deg,#ffb4ab 60%,#fff0ef 100%); color: #b71c1c; box-shadow: 0 2px 12px #b71c1c33; }
+    .result { text-align: center; font-size: 1.22rem; margin: 22px 0 0 0; min-height: 36px; font-weight: bold; letter-spacing: 1px; }
+    .next-btn { display: block; margin: 38px auto 0 auto; background: linear-gradient(90deg,#1976d2 60%,#63a4ff 100%); color: #fff; border: none; border-radius: 18px; padding: 15px 48px; font-size: 1.13rem; cursor: pointer; transition: background 0.18s, box-shadow 0.18s, transform 0.18s; box-shadow: 0 2px 8px #1976d233; font-weight: 500; letter-spacing: 1px; }
+    .next-btn:hover { background: #1565c0; box-shadow: 0 6px 18px #1976d233; transform: translateY(-2px) scale(1.04); }
+    .stats { text-align: center; color: #888; margin-top: 22px; font-size: 1.08rem; letter-spacing: 1px; }
+    .answer-img-box { margin-top: 22px; text-align: center; }
+    .answer-img-box img { max-width: 240px; max-height: 150px; border-radius: 14px; border: 2px solid #e3eafc; background: #f6fafd; margin-top: 4px; box-shadow: 0 2px 8px #0001; }
+    /* 弹窗动画与样式 */
+    #rankModal, #wrongModal { display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#0005; z-index:1000; align-items:center; justify-content:center; animation: fadeIn 0.25s; }
+    #rankModal[style*="display: flex"], #wrongModal[style*="display: flex"] { animation: fadeIn 0.25s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    #rankModal > div, #wrongModal > div { background:#fff; padding:38px 32px 28px 32px; border-radius:22px; min-width:260px; max-width:96vw; box-shadow:0 8px 40px #1976d233; position:relative; }
+    #rankModal h2, #wrongModal h2 { margin-top:0; text-align:center; color:#1976d2; letter-spacing:1px; font-size:1.35rem; }
+    #rankContent { font-size:1.13rem; text-align:center; color:#333; }
+    #wrongContent { font-size:1.08rem; }
+    #wrongContent .wrong-item { display:flex; align-items:center; gap:18px; margin-bottom:22px; background:linear-gradient(90deg,#f6fafd 60%,#e3eafc 100%); border-radius:14px; padding:12px 10px; box-shadow:0 1px 4px #0001; }
+    #wrongContent .wrong-item img { max-width:120px; max-height:80px; border-radius:10px; border:2px solid #e3eafc; background:#f6fafd; }
+    #wrongContent .wrong-label { font-size:1.13rem; font-weight:500; color:#1976d2; letter-spacing:1px; }
+    #wrongContent .wrong-index { color:#888; font-size:1.05rem; margin-right:8px; }
+    #wrongContent .empty { color:#bbb; text-align:center; margin:38px 0 22px 0; font-size:1.13rem; }
+    @media (max-width: 700px) {
+      .container { max-width: 99vw; padding: 8vw 2vw 8vw 2vw; margin: 0; border-radius: 0; box-shadow: none; }
+      .img-box img { max-width: 92vw; max-height: 38vw; border-radius: 8vw; }
+      .option-btn { min-width: 44vw; font-size: 1.02rem; min-height: 40px; border-radius: 8vw; }
+      .next-btn { font-size: 1.02rem; padding: 11px 18vw; border-radius: 8vw; }
+      .answer-img-box img { max-width: 70vw; max-height: 28vw; border-radius: 6vw; }
+      #rankModal > div, #wrongModal > div { min-width: 0; padding: 6vw 2vw 4vw 2vw; border-radius: 6vw; }
+    }
+    #wrongModal > div { display: flex; flex-direction: column; align-items: center; }
+    #wrongModal h2 { font-size: 1.6rem; font-weight: 700; color: #1976d2; margin-bottom: 18px; letter-spacing: 2px; }
+    #wrongContent { width: 100%; margin-bottom: 28px; }
+    #wrongContent .empty { color: #bbb; text-align: center; margin: 44px 0 32px 0; font-size: 1.18rem; display: flex; flex-direction: column; align-items: center; }
+    #wrongContent .empty::before { content: '😃'; font-size: 2.2rem; margin-bottom: 8px; }
+    .wrong-btns { width: 100%; display: flex; flex-direction: column; gap: 18px; align-items: center; }
+    .wrong-action-btn { width: 90%; max-width: 320px; min-width: 180px; padding: 15px 0; border: none; border-radius: 22px; font-size: 1.13rem; font-weight: 600; letter-spacing: 1px; margin: 0 auto; box-shadow: 0 2px 8px #1976d220; cursor: pointer; transition: background 0.18s, box-shadow 0.18s, transform 0.18s; }
+    .wrong-action-btn.review { background: linear-gradient(90deg,#1976d2 60%,#63a4ff 100%); color: #fff; }
+    .wrong-action-btn.review:hover { background: #1565c0; box-shadow: 0 6px 18px #1976d233; transform: translateY(-2px) scale(1.04); }
+    .wrong-action-btn.clear { background: linear-gradient(90deg,#d32f2f 60%,#ffb4ab 100%); color: #fff; }
+    .wrong-action-btn.clear:hover { background: #b71c1c; box-shadow: 0 6px 18px #b71c1c33; transform: translateY(-2px) scale(1.04); }
+    .wrong-action-btn.close { background: #bdbdbd; color: #fff; }
+    .wrong-action-btn.close:hover { background: #888; box-shadow: 0 6px 18px #8883; transform: translateY(-2px) scale(1.04); }
+    @media (max-width: 700px) {
+      #wrongModal > div { padding: 8vw 2vw 6vw 2vw; border-radius: 6vw; }
+      .wrong-action-btn { min-width: 0; width: 98%; font-size: 1.01rem; border-radius: 8vw; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>蛇类知识刷题</h1>
+    <div class="top-btns">
+      <button class="top-btn rank" id="rankBtn">排行榜</button>
+      <button class="top-btn wrong" id="wrongBtn">错题本</button>
+    </div>
+    <div class="img-box" id="imgBox">
+      <img id="questionImg" src="" alt="蛇类图片" style="display:none;"/>
+    </div>
+    <div class="options" id="optionsBox"></div>
+    <div class="result" id="resultBox"></div>
+    <div class="answer-img-box" id="answerImgBox" style="text-align:center;margin-top:10px;"></div>
+    <button class="next-btn" id="nextBtn" style="display:none;">下一题</button>
+    <div class="stats" id="statsBox"></div>
+  </div>
+  <!-- 排行榜弹窗 -->
+  <div id="rankModal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:#0005;z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:28px 32px;border-radius:10px;min-width:260px;max-width:90vw;box-shadow:0 2px 12px #0002;position:relative;">
+      <h2 style="margin-top:0;text-align:center;">排行榜</h2>
+      <div id="rankContent" style="font-size:16px;text-align:center;"></div>
+      <button class="next-btn" id="closeRankBtn" style="margin-top:18px;background:#888;">关闭</button>
+    </div>
+  </div>
+  <!-- 错题本弹窗 -->
+  <div id="wrongModal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:#0005;z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:24px 18px 18px 18px;border-radius:10px;min-width:280px;max-width:96vw;max-height:90vh;overflow:auto;box-shadow:0 2px 12px #0002;position:relative;">
+      <h2>错题本</h2>
+      <div id="wrongContent"></div>
+      <div class="wrong-btns">
+        <button class="wrong-action-btn review" id="reviewWrongBtn">错题复习</button>
+        <button class="wrong-action-btn clear" id="clearWrongBtn">清空错题本</button>
+        <button class="wrong-action-btn close" id="closeWrongBtn">关闭</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 1. 题库数据（自动生成）
+    // const questionBase = [
+    //   // 这里将由脚本自动填充所有题目
+    // ];
+    // const categories = [
+    //   // 这里将由脚本自动填充所有类别
+    // ];
+
+    // 2. 自动扫描 pic/questions 目录，生成题库和类别
+    // 由于前端无法直接读取本地目录，需手动/脚本生成数据，或用构建工具自动生成
+    // 这里用静态数据填充（请用脚本生成后替换）
+    // 示例：
+    // questionBase = [ { category: '王锦蛇菜花蛇', img: 'pic/questions/王锦蛇菜花蛇/1.png' }, ... ]
+    // categories = [ '王锦蛇菜花蛇', ... ]
+
+    // ==== 自动生成数据开始 ====
+    // 下面内容请用脚本自动生成
+    const autoData = (() => {
+      const cats = [
+        "半环扁尾海蛇","斑竹花蛇鳗","棕黑锦蛇","水游蛇","玉斑丽蛇","王锦蛇菜花蛇","白枕白环蛇","百花锦蛇","眼镜王蛇","短尾腹","红腹伊澳蛇","紫棕小头蛇","紫沙蛇","绿瘦蛇","网纹蟒","舟山眼镜蛇","荒原非洲藤蛇","莽山原矛头蝮","虎斑颈槽蛇","银环蛇","马来环蛇","马来腹","黄斑渔游蛇","黑眉锦蛇"
+      ];
+      const imgs = [
+        [1],[1],[1],[1],[1],[1,2],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1,2],[1],[1],[1,2],[1],[1],[1],[1],[1,2,3]
+      ];
+      let qb = [];
+      cats.forEach((cat, i) => {
+        imgs[i].forEach(num => {
+          qb.push({ category: cat, img: `pic/questions/${cat}/${num}.png` });
+        });
+      });
+      return { cats, qb };
+    })();
+    const categories = autoData.cats;
+    const questionBase = autoData.qb;
+    // ==== 自动生成数据结束 ====
+
+    // 排行榜和错题本数据结构
+    function getRank() {
+      return JSON.parse(localStorage.getItem('snake_rank')||'{"maxRate":0,"maxCorrect":0,"maxTotal":0}')
+    }
+    function setRank(rank) {
+      localStorage.setItem('snake_rank', JSON.stringify(rank));
+    }
+    function updateRank() {
+      let rank = getRank();
+      let rate = stats.total ? stats.correct / stats.total : 0;
+      if (rate > rank.maxRate) rank.maxRate = rate;
+      if (stats.correct > rank.maxCorrect) rank.maxCorrect = stats.correct;
+      if (stats.total > rank.maxTotal) rank.maxTotal = stats.total;
+      setRank(rank);
+    }
+    function showRankModal() {
+      let rank = getRank();
+      document.getElementById('rankContent').innerHTML =
+        `最高正确率：<b>${Math.round(rank.maxRate*100)}%</b><br>最高正确数：<b>${rank.maxCorrect}</b><br>最高答题数：<b>${rank.maxTotal}</b>`;
+      document.getElementById('rankModal').style.display = 'flex';
+    }
+    // 错题本
+    function getWrongBook() {
+      return JSON.parse(localStorage.getItem('snake_wrong')||'[]');
+    }
+    function setWrongBook(arr) {
+      localStorage.setItem('snake_wrong', JSON.stringify(arr));
+    }
+    function addWrong(q) {
+      let arr = getWrongBook();
+      // 避免重复
+      if (!arr.some(item=>item.img===q.img)) {
+        arr.push(q);
+        setWrongBook(arr);
+      }
+    }
+    function clearWrongBook() {
+      setWrongBook([]);
+    }
+    function showWrongModal() {
+      let arr = getWrongBook();
+      let html = arr.length ? arr.map((q,i)=>
+        `<div class='wrong-item'><span class='wrong-index'>${i+1}.</span><img src='${q.img}' alt='错题图片'><span class='wrong-label'>${q.category}</span></div>`
+      ).join('') : '<div class="empty">暂无错题，继续加油！</div>';
+      document.getElementById('wrongContent').innerHTML = html;
+      document.getElementById('wrongModal').style.display = 'flex';
+    }
+    // 错题复习模式
+    let wrongReviewList = [];
+    let wrongReviewIdx = 0;
+    function startWrongReview() {
+      wrongReviewList = getWrongBook();
+      wrongReviewIdx = 0;
+      if (!wrongReviewList.length) {
+        alert('暂无错题');
+        return;
+      }
+      document.getElementById('wrongModal').style.display = 'none';
+      showWrongQuestion();
+    }
+    function showWrongQuestion() {
+      if (wrongReviewIdx >= wrongReviewList.length) {
+        alert('错题复习已完成！');
+        showQuestion();
+        return;
+      }
+      answered = false;
+      current = wrongReviewList[wrongReviewIdx];
+      document.getElementById('questionImg').src = current.img;
+      document.getElementById('questionImg').style.display = '';
+      document.getElementById('resultBox').textContent = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('answerImgBox').innerHTML = '';
+      // 生成6个选项（1个正确+5个错误）
+      let wrongCats = categories.filter(cat => cat !== current.category);
+      let selectedWrongs = shuffle(wrongCats).slice(0, 5);
+      let options = shuffle([current.category, ...selectedWrongs]);
+      const optionsBox = document.getElementById('optionsBox');
+      optionsBox.innerHTML = '';
+      options.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = cat;
+        btn.onclick = () => selectWrongOption(cat, btn);
+        optionsBox.appendChild(btn);
+      });
+    }
+    function selectWrongOption(cat, btn) {
+      if (answered) return;
+      answered = true;
+      const optionsBtns = document.querySelectorAll('.option-btn');
+      optionsBtns.forEach(b => {
+        b.disabled = true;
+        if (b.textContent === current.category) b.classList.add('correct');
+        if (b === btn && cat !== current.category) b.classList.add('wrong');
+      });
+      if (cat === current.category) {
+        document.getElementById('resultBox').textContent = '答对了！';
+      } else {
+        document.getElementById('resultBox').textContent = `答错了，正确答案：${current.category}`;
+      }
+      // 答案图片
+      showAnswerImg();
+      document.getElementById('nextBtn').style.display = '';
+      document.getElementById('nextBtn').onclick = () => {
+        wrongReviewIdx++;
+        showWrongQuestion();
+      };
+    }
+    // 答案图片显示
+    function showAnswerImg() {
+      // 题目图片名如 pic/questions/类别/1.png => 答案图片 pic/results/类别/1.png
+      let qimg = current.img;
+      let ansImg = qimg.replace('questions','results');
+      let img = document.createElement('img');
+      img.src = ansImg;
+      img.style.maxWidth = '180px';
+      img.style.maxHeight = '120px';
+      img.style.borderRadius = '6px';
+      img.style.border = '1px solid #eee';
+      img.onerror = function(){this.style.display='none';};
+      let box = document.getElementById('answerImgBox');
+      box.innerHTML = '<div style="color:#888;font-size:14px;">答案图片：</div>';
+      box.appendChild(img);
+    }
+
+    // 3. 题目状态
+    let current = null;
+    let answered = false;
+    let stats = { total: 0, correct: 0 };
+
+    function pickQuestion() {
+      const idx = Math.floor(Math.random() * questionBase.length);
+      return questionBase[idx];
+    }
+
+    function showQuestion() {
+      answered = false;
+      current = pickQuestion();
+      document.getElementById('questionImg').src = current.img;
+      document.getElementById('questionImg').style.display = '';
+      document.getElementById('resultBox').textContent = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('answerImgBox').innerHTML = '';
+      // 生成6个选项（1个正确+5个错误）
+      let wrongCats = categories.filter(cat => cat !== current.category);
+      let selectedWrongs = shuffle(wrongCats).slice(0, 5);
+      let options = shuffle([current.category, ...selectedWrongs]);
+      const optionsBox = document.getElementById('optionsBox');
+      optionsBox.innerHTML = '';
+      options.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = cat;
+        btn.onclick = () => selectOption(cat, btn);
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function selectOption(cat, btn) {
+      if (answered) return;
+      answered = true;
+      stats.total++;
+      const optionsBtns = document.querySelectorAll('.option-btn');
+      optionsBtns.forEach(b => {
+        b.disabled = true;
+        if (b.textContent === current.category) b.classList.add('correct');
+        if (b === btn && cat !== current.category) b.classList.add('wrong');
+      });
+      if (cat === current.category) {
+        document.getElementById('resultBox').textContent = '答对了！';
+        stats.correct++;
+      } else {
+        document.getElementById('resultBox').textContent = `答错了，正确答案：${current.category}`;
+        addWrong(current);
+        showAnswerImg();
+      }
+      document.getElementById('nextBtn').style.display = '';
+      updateStats();
+      updateRank();
+    }
+
+    function updateStats() {
+      document.getElementById('statsBox').textContent = `已答：${stats.total}，正确：${stats.correct}，正确率：${stats.total ? Math.round(stats.correct / stats.total * 100) : 0}%`;
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    document.getElementById('nextBtn').onclick = showQuestion;
+    document.getElementById('rankBtn').onclick = showRankModal;
+    document.getElementById('closeRankBtn').onclick = function(){document.getElementById('rankModal').style.display='none';};
+    document.getElementById('wrongBtn').onclick = showWrongModal;
+    document.getElementById('closeWrongBtn').onclick = function(){document.getElementById('wrongModal').style.display='none';};
+    document.getElementById('clearWrongBtn').onclick = function(){if(confirm('确定清空错题本？')){clearWrongBook();showWrongModal();}};
+    document.getElementById('reviewWrongBtn').onclick = startWrongReview;
+    window.onload = () => {
+      showQuestion();
+      updateStats();
+    };
+  </script>
+</body>
+</html> 
