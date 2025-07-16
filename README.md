@@ -3,6 +3,7 @@
 > 🐍 A modern, beautiful, pure front-end quiz web app for snake species recognition.
 > 
 > 蛇类知识刷题网页 —— 纯前端、无需后端、即开即用。
+> 访问 https://afterimages.github.io/SerpentQuiz/
 
 ## 项目简介
 
