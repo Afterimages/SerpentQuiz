@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>蛇类知识刷题</title>
+  <title>SerpentQuiz 蛇类辨别</title>
   <style>
     body { font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif; background: linear-gradient(135deg,#e3f0ff 0%,#f9f9f9 100%); margin: 0; padding: 0; }
     .container { max-width: 480px; margin: 56px auto 36px auto; background: #fff; border-radius: 28px; box-shadow: 0 8px 40px #1976d220; padding: 48px 28px 38px 28px; position: relative; }
@@ -25,8 +25,8 @@
     .next-btn { display: block; margin: 38px auto 0 auto; background: linear-gradient(90deg,#1976d2 60%,#63a4ff 100%); color: #fff; border: none; border-radius: 18px; padding: 15px 48px; font-size: 1.13rem; cursor: pointer; transition: background 0.18s, box-shadow 0.18s, transform 0.18s; box-shadow: 0 2px 8px #1976d233; font-weight: 500; letter-spacing: 1px; }
     .next-btn:hover { background: #1565c0; box-shadow: 0 6px 18px #1976d233; transform: translateY(-2px) scale(1.04); }
     .stats { text-align: center; color: #888; margin-top: 22px; font-size: 1.08rem; letter-spacing: 1px; }
-    .answer-img-box { margin-top: 22px; text-align: center; }
-    .answer-img-box img { max-width: 240px; max-height: 150px; border-radius: 14px; border: 2px solid #e3eafc; background: #f6fafd; margin-top: 4px; box-shadow: 0 2px 8px #0001; }
+    .answer-img-box { margin-top: 22px; text-align: center; margin-bottom: 18px; }
+    .answer-img-box img { max-width: 420px; max-height: 280px; border-radius: 14px; border: 2px solid #e3eafc; background: #f6fafd; margin-top: 4px; box-shadow: 0 2px 8px #0001; }
     /* 弹窗动画与样式 */
     #rankModal, #wrongModal { display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#0005; z-index:1000; align-items:center; justify-content:center; animation: fadeIn 0.25s; }
     #rankModal[style*="display: flex"], #wrongModal[style*="display: flex"] { animation: fadeIn 0.25s; }
@@ -45,7 +45,7 @@
       .img-box img { max-width: 92vw; max-height: 38vw; border-radius: 8vw; }
       .option-btn { min-width: 44vw; font-size: 1.02rem; min-height: 40px; border-radius: 8vw; }
       .next-btn { font-size: 1.02rem; padding: 11px 18vw; border-radius: 8vw; }
-      .answer-img-box img { max-width: 70vw; max-height: 28vw; border-radius: 6vw; }
+      .answer-img-box img { max-width: 96vw; max-height: 48vw; border-radius: 6vw; }
       #rankModal > div, #wrongModal > div { min-width: 0; padding: 6vw 2vw 4vw 2vw; border-radius: 6vw; }
     }
     #wrongModal > div { display: flex; flex-direction: column; align-items: center; }
@@ -69,7 +69,8 @@
 </head>
 <body>
   <div class="container">
-    <h1>蛇类知识刷题</h1>
+    <h1>SerpentQuiz 蛇类辨别</h1>
+    <div style="text-align:center;color:#1976d2;font-size:1.08rem;margin-bottom:10px;letter-spacing:1px;opacity:0.82;">A Modern Snake Species Quiz Web App</div>
     <div class="top-btns">
       <button class="top-btn rank" id="rankBtn">排行榜</button>
       <button class="top-btn wrong" id="wrongBtn">错题本</button>
@@ -256,13 +257,13 @@
       let ansImg = qimg.replace('questions','results');
       let img = document.createElement('img');
       img.src = ansImg;
-      img.style.maxWidth = '180px';
-      img.style.maxHeight = '120px';
-      img.style.borderRadius = '6px';
-      img.style.border = '1px solid #eee';
+      img.style.maxWidth = '420px';
+      img.style.maxHeight = '280px';
+      img.style.borderRadius = '14px';
+      img.style.border = '2px solid #e3eafc';
       img.onerror = function(){this.style.display='none';};
       let box = document.getElementById('answerImgBox');
-      box.innerHTML = '<div style="color:#888;font-size:14px;">答案图片：</div>';
+      box.innerHTML = '<div style="color:#888;font-size:14px;margin-bottom:6px;">答案图片：</div>';
       box.appendChild(img);
     }
 
